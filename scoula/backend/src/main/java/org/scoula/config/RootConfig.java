@@ -22,8 +22,8 @@ import javax.sql.DataSource;
 // 어떤 경로에서 property를 가져올지 설정 (classpath를 붙여줘야 프로젝트의 루트로 접근)
 // 그냥 /를 사용하면 webapp 폴더가 루트가 된다.
 @PropertySource("classpath:/application.properties")
-@MapperScan(basePackages = {"org.scoula.board.mapper"}) // mapper의 위치 알려주기
-@ComponentScan(basePackages = {"org.scoula.board.service"})
+@MapperScan(basePackages = {"org.scoula.board.mapper","org.scoula.member.mapper"}) // mapper의 위치 알려주기
+@ComponentScan(basePackages = {"org.scoula.board.service","org.scoula.member.service"})
 @EnableTransactionManagement // 트랜잭션 관리 설정
 public class RootConfig {
     // application.properties 파일에서 값을 읽어와서 변수에 주입
