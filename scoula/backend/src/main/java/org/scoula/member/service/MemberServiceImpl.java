@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.scoula.member.dto.MemberDTO;
 import org.scoula.member.dto.MemberJoinDTO;
+import org.scoula.member.dto.MemberUpdateDTO;
+import org.scoula.member.exception.PasswordMismatchException;
 import org.scoula.member.mapper.MemberMapper;
 import org.scoula.security.account.domain.AuthVO;
 import org.scoula.security.account.domain.MemberVO;
@@ -71,4 +73,25 @@ public class MemberServiceImpl implements MemberService {
         
         return get(member.getUsername()); // 저장된 회원 정보 반환
     }
+
+    @Override
+    public MemberDTO update(MemberUpdateDTO member) {
+//        사용자 이름을 테이블에서 조회하여 MemberVO 객체에 저장
+        MemberVO vo = mapper.get(member.getUsername());
+
+//        암호화된 비밀번호를 비교해주기 위해서는 반드시 matches 사용 (순서 중요)
+        if(!passwordEncoder.matches(member.getPassword(), vo.getPassword())) {
+            throw new PasswordMismatchException(); //비밀번호 불일치 시 예외 발생
+        }
+
+//        업데이트할 정보를 DB에 반영
+        mapper.update(member.toVO());
+//        새로운 아바타 저장
+        saveAvatar(member.getAvatar(), member.getUsername());
+
+        // 업데이트된 회원 정보 반환
+        return get(member.getUsername());
+    }
+
+
 }
