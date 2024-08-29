@@ -99,8 +99,19 @@ public class BoardServiceImpl implements BoardService{
     public BoardDTO update(BoardDTO board) {
         log.info("update.........." + board);
 
+        BoardVO boardVO = board.toVo();
+        log.info("update.........." + boardVO);
+
 //        mapper의 update를 호출해서 행 수정
-        mapper.update(board.toVo());
+        mapper.update(boardVO);
+
+        //파일 업로드 처리
+        List<MultipartFile> files = board.getFiles();
+        if(files != null && !files.isEmpty()) {
+            // 첨부된 파일이 있을 경우 파일 업로드
+            upload(boardVO.getNo(), files);
+        }
+
 //        바뀐 행을 가져와서 DTO로 반환
         return get(board.getNo());
     }
