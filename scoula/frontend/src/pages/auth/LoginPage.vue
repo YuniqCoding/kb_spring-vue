@@ -1,8 +1,9 @@
 <script setup>
 import { computed, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
+const cr = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
@@ -21,7 +22,13 @@ const login = async () => {
   console.log(member); // 입력된 사용자 정보 출력
   try {
     await auth.login(member); // 인증 스토어에서 로컬 스토리지에 해당 사용자 정보 저장
-    router.push('/'); //로그인 성공시 홈 화면으로 이동
+    if (cr.query.next) {
+      // 로그인 후 이동할 페이지 정보가 있는 경우 해당 페이지로 이동
+      router.push({ name: cr.query.next });
+    } else {
+      //이동 페이지 정보가 없는 경우엔 홈 화면으로 이동
+      router.push('/');
+    }
   } catch (e) {
     console.log('에러========', e);
     error.value = e.response.data; // 에러 메시지를 화면에 표시

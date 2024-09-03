@@ -6,6 +6,17 @@
 <!-- MyBatis 매퍼 설정 파일 -->
 <mapper namespace="org.scoula.board.mapper.BoardMapper">
 
+<!--    board 테이블에서 전체 게시글 개수 조회-->
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from tbl_board
+    </select>
+
+<!--    board 테이블에서 offset 인덱스에서 시작해서 amount만큼 잘라낸 게시물을 no 내림차순으로 조회-->
+    <select id="getPage" resultType="BoardVO">
+        select * from tbl_board order by no desc
+        limit #{offset}, #{amount}
+    </select>
+
     <resultMap id="attachmentMap" type="org.scoula.board.domain.BoardAttachmentVO">
         <id column="ano" property="no"/>
         <result column="bno" property="bno"/>
@@ -92,7 +103,9 @@
         where no = #{no}
     </select>
 
-<!--    해당 파일 번호(no)와 일치하는 첨부 파일을 삭제한다-->
+
+
+    <!--    해당 파일 번호(no)와 일치하는 첨부 파일을 삭제한다-->
     <delete id="deleteAttachment">
         delete from tbl_board_attachment
         where no = #{no}

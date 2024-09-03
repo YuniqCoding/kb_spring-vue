@@ -1,4 +1,6 @@
 // 게시판 관련한 라우트를 정의하는 js
+import { isAuthenticated } from '@/util/guards';
+
 export default [
   {
     // 게시판 리스트 페이지에 대한 라우트
@@ -17,11 +19,14 @@ export default [
     path: '/board/create',
     name: 'board/create',
     component: () => import('../pages/board/BoardCreatePage.vue'),
+    // 라우트 접근 전에 인증 여부 확인
+    beforeEnter: isAuthenticated,
   },
   {
     // 게시판 수정 페이지에 대한 라우트
     path: '/board/update/:no',
     name: 'board/update',
     component: () => import('../pages/board/BoardUpdatePage.vue'),
+    beforeEnter: isAuthenticated,
   },
 ];

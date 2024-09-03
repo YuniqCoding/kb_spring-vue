@@ -54,7 +54,8 @@ const reset = () => {
 const load = async () => {
   const data = await boardApi.get(no);
   orgArticle.value = { ...data };
-  attachments.value = data.attachments;
+  attachments.value = data.attaches;
+  console.log(attachments.value);
   reset();
 };
 
@@ -62,5 +63,74 @@ load();
 </script>
 
 <template>
-  <h1>게시글 수정 페이지</h1>
+  <h1><i class="fa-regular fa-pen-to-square"></i> 글 수정</h1>
+  <form @submit.prevent="submit">
+    <!-- 제목 입력 필드 -->
+    <div class="mb-3 mt-3">
+      <label for="title" class="form-label"> 제목 </label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="제목"
+        id="title"
+        v-model="article.title"
+      />
+      <div class="invalid-feedback">제목은 필수 요소입니다.</div>
+    </div>
+    <!-- 기존 첨부 파일 목록 -->
+    <div class="mb-3 mt-3">
+      <label class="form-label"> 기존 첨부파일 </label>
+      <!-- 첨부파일들을 돌면서 이름과 휴지통 아이콘 생성, 휴지통 클릭시 해당 첨부파일 삭제됨 -->
+      <div v-for="file in attachments" :key="file.no" class="attach">
+        <i class="fa-solid fa-paperclip"></i> {{ file.filename }}
+        <i
+          class="fa-solid fa-trash-can text-danger ms-2"
+          @click="removeFile(file.no, file.filename)"
+        ></i>
+      </div>
+    </div>
+    <!-- 새로운 첨부 파일 업로드 -->
+    <div class="mb-3 mt-3">
+      <label for="files" class="form-label"> 첨부파일 </label>
+      <input
+        type="file"
+        class="form-control"
+        placeholder="첨부파일"
+        id="files"
+        ref="files"
+        multiple
+      />
+    </div>
+    <!-- 내용 입력 필드 -->
+    <div class="mb-3 mt-3">
+      <label for="content" class="form-label"> 내용 </label>
+      <textarea
+        class="form-control"
+        placeholder="내용"
+        id="content"
+        v-model="article.content"
+        rows="10"
+      ></textarea>
+    </div>
+    <!-- 버튼 그룹 -->
+    <div class="my-5 text-center">
+      <button type="submit" class="btn btn-primary me-3">
+        <i class="fa-solid fa-check"></i> 확인
+      </button>
+      <!-- 기존 게시글 데이터 불러오는 버튼 -->
+      <button type="button" class="btn btn-primary me-3" @click="reset">
+        <i class="fa-solid fa-undo"></i> 취소
+      </button>
+      <!-- 상세 페이지로 돌아가는 버튼 -->
+      <button class="btn btn-primary" @click="back">
+        <i class="fa-solid fa-arrow-left"></i> 돌아가기
+      </button>
+    </div>
+  </form>
 </template>
+
+<style>
+.fa-trash-can {
+  cursor: pointer;
+}
+</style>
